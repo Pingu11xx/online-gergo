@@ -326,14 +326,16 @@
       }
     }
 
-    async function checkKickStatus() {
+   async function checkKickStatus() {
       if (isManualOverride) return;
 
       try {
-        const proxyUrl = "https://api.allorigins.win/get?url=";
-        const kickApiUrl = encodeURIComponent(`https://kick.com/api/v1/channels/${TARGET_CHANNEL}`);
+        // Egyedi időbélyeg a cache (beragadt adatok) elkerülésére
+        const timestamp = new Date().getTime();
+        const targetUrl = `https://kick.com/api/v1/channels/${TARGET_CHANNEL}`;
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&cb=${timestamp}`;
         
-        const response = await fetch(proxyUrl + kickApiUrl);
+        const response = await fetch(proxyUrl);
         if (!response.ok) throw new Error("API hiba");
 
         const data = await response.json();
@@ -347,7 +349,6 @@
         if (!isManualOverride) updateUI(false);
       }
     }
-
     function toggleManualOverride() {
       isManualOverride = true;
       manualState = !manualState;
