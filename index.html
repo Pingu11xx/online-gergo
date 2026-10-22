@@ -10,7 +10,7 @@
     :root {
       --kick-green: #53fc18;
       --kick-dark: #0b0e0f;
-      --card-bg: rgba(20, 25, 28, 0.85);
+      --card-bg: #14191c;
       --card-border: #242d32;
       --red-alert: #ff3b30;
       --text-main: #f0f4f8;
@@ -26,9 +26,6 @@
     body {
       font-family: 'Outfit', sans-serif;
       background-color: var(--kick-dark);
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(145, 70, 255, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(83, 252, 24, 0.05) 0%, transparent 40%);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -39,20 +36,31 @@
       overflow-x: hidden;
     }
 
+    .bg-glow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(83, 252, 24, 0.08) 0%, rgba(0,0,0,0) 70%);
+      z-index: 0;
+      pointer-events: none;
+      transition: background 0.5s ease;
+    }
+
     .container {
       position: relative;
       z-index: 1;
       width: 100%;
       max-width: 650px;
-      background: var(--card-bg);
+      background: rgba(20, 25, 28, 0.85);
       border: 1px solid var(--card-border);
       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border-radius: 24px;
       padding: 32px 24px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.6);
       text-align: center;
-      transition: all 0.4s ease;
     }
 
     h1 {
@@ -67,7 +75,7 @@
     .status-card {
       border-radius: 18px;
       padding: 30px 20px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       border: 2px solid transparent;
     }
@@ -124,7 +132,7 @@
     }
 
     .status-title {
-      font-size: 2.3rem;
+      font-size: 2.5rem;
       font-weight: 900;
       margin-bottom: 10px;
       line-height: 1.1;
@@ -136,22 +144,11 @@
       font-weight: 500;
     }
 
-    .stream-container {
-      display: none;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: #000;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    }
-
-    .stream-container iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
     }
 
     .btn {
@@ -160,7 +157,6 @@
       justify-content: center;
       gap: 10px;
       padding: 16px 24px;
-      width: 100%;
       border-radius: 14px;
       font-weight: 800;
       font-size: 1rem;
@@ -168,20 +164,34 @@
       transition: all 0.2s ease;
       cursor: pointer;
       border: none;
-      background: var(--kick-green);
-      color: #000;
-      margin-bottom: 20px;
     }
 
-    .btn:hover {
+    .btn-kick {
+      background: var(--kick-green);
+      color: #000;
+    }
+
+    .btn-kick:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(83, 252, 24, 0.4);
+    }
+
+    .btn-override {
+      background: #242d32;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+    }
+
+    .btn-override:hover {
+      background: #2e3a40;
+      color: var(--text-main);
     }
 
     .quote-box {
       background: rgba(0,0,0,0.3);
       border-radius: 12px;
       padding: 16px;
+      margin-top: 16px;
       font-style: italic;
       color: #a0aec0;
       font-size: 0.95rem;
@@ -203,28 +213,33 @@
 </head>
 <body>
 
+  <div class="bg-glow" id="bgGlow"></div>
+
   <div class="container">
-    <h1>Vajon Gergő épp Reni streamjét nézi?</h1>
+    <h1>ONLINE VAN GERGŐ?</h1>
 
     <div class="status-card offline" id="statusCard">
       <div class="badge" id="statusBadge">
         <div class="dot"></div>
         <span id="badgeText">ELLENŐRZÉS...</span>
       </div>
-      <div class="status-title" id="statusTitle">Mérés folyamatban...</div>
-      <div class="status-desc" id="statusDesc">Villámgyors lekérdezés a Kick API-ból...</div>
+      <div class="status-title" id="statusTitle">Készülj fel...</div>
+      <div class="status-desc" id="statusDesc">Lekérdezzük a Kick API-t!</div>
     </div>
-
-    <div class="stream-container" id="streamBox">
-      <iframe id="kickFrame" src="" allowfullscreen="true"></iframe>
-    </div>
-
-    <a href="https://kick.com/renipuff" target="_blank" class="btn" id="kickLink">
-      📺 ReniPuff Kick Csatornája
-    </a>
 
     <div class="quote-box" id="quoteBox">
       "Keresem a jelet... ha Reni elindul, Gergő gépének ventilátorai felpörögnek."
+    </div>
+
+    <br>
+
+    <div class="btn-group">
+      <a href="https://kick.com/renipuff" target="_blank" class="btn btn-kick" id="kickLink">
+        📺 ReniPuff Kick Csatornája
+      </a>
+      <button class="btn btn-override" onclick="toggleManualOverride()">
+        ⚡ Teszt Mód: Manuális Átkapcsolás (Override)
+      </button>
     </div>
 
     <div class="channel-info">
@@ -233,25 +248,24 @@
   </div>
 
   <script>
-    const TARGET_CHANNEL = "renipuff"; 
+    let TARGET_CHANNEL = "renipuff"; 
 
     const OFFLINE_QUOTES = [
-      "😴 Gergő jelenleg tanul / alszik / értelmes életet él. (Reni offline)",
-      "🥤 Reni még bekészíti a szörpöt, Gergő pedig türelmetlenül pattog a székében.",
-      "📉 Nulla stream, nulla akció. Gergő épp próbál úgy tenni, mintha hasznos dolgot csinálna.",
-      "⏳ Csend a vihar előtt... a billentyűzet még nem izzik Reni miatt.",
-      "💤 Valószínűleg még senki sem indította be a gépet. Pihenőidő!"
+      "Gergő jelenleg tanul / alszik / értelmes életet él. (Reni offline)",
+      "Csend és nyugalom a Discordon. Gergő gyanúsan nem elérhető.",
+      "A radar nem mutat semmit. Reni pihen, Gergő pedig várakozik.",
+      "Gergő aktívan próbálja nem frissítgetni a Kick oldalt."
     ];
 
     const ONLINE_QUOTES = [
-      "🔥 RIADÓ! Reni elindította a streamet! Gergő már a chaten pörög!",
-      "🚀 RIADÓ! Beindult a műsor, Gergő 0.01 másodperc alatt beköszönt!",
-      "🎮 Megy a stream! A Discord üres, mert mindenki Reni Kick-jét nézi!",
-      "⚡ Élesedett a közvetítés! Gergő gépének ventilátorai felpörögtek!",
-      "🍿 Popcorn bekészítve, Gergő már az első sorból figyeli Renit!"
+      " RIADÓ! Reni elindította a streamet! Gergő már a gép előtt ül!",
+      "⚡ Gergő reakcióideje: 0.002 másodperc! Azonnal felcsatlakozott!",
+      "🔥 Veszélyhelyzet! A Discord gomb megnyomva, Gergő jelen van!",
+      " A stream megy! Gergő eldobott mindent és beizzította a közvetítést!"
     ];
 
-    let wasOnline = false;
+    let isManualOverride = false;
+    let manualState = false;
 
     const statusCard = document.getElementById('statusCard');
     const badgeText = document.getElementById('badgeText');
@@ -260,8 +274,6 @@
     const quoteBox = document.getElementById('quoteBox');
     const kickLink = document.getElementById('kickLink');
     const watchedChannelElem = document.getElementById('watchedChannel');
-    const streamBox = document.getElementById('streamBox');
-    const kickFrame = document.getElementById('kickFrame');
 
     watchedChannelElem.textContent = TARGET_CHANNEL;
     kickLink.href = `https://kick.com/${TARGET_CHANNEL}`;
@@ -301,15 +313,9 @@
         statusTitle.textContent = "IGEN, ONLINE!";
         statusDesc.textContent = `${TARGET_CHANNEL} épp streamel! Gergő garantáltan nézi!`;
         quoteBox.textContent = ONLINE_QUOTES[Math.floor(Math.random() * ONLINE_QUOTES.length)];
-        streamBox.style.display = "block";
-
-        if (!wasOnline) {
-          kickFrame.src = `https://player.kick.com/${TARGET_CHANNEL}`;
-          playSound('online');
-          if (typeof confetti === 'function') {
-            confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-          }
-          wasOnline = true;
+        
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
         }
       } else {
         statusCard.className = "status-card offline";
@@ -317,52 +323,40 @@
         statusTitle.textContent = "NEM, OFFLINE";
         statusDesc.textContent = `${TARGET_CHANNEL} nem streamel. Gergő gyanúsan tétlen.`;
         quoteBox.textContent = OFFLINE_QUOTES[Math.floor(Math.random() * OFFLINE_QUOTES.length)];
-        streamBox.style.display = "none";
-        kickFrame.src = "";
-        
-        if (wasOnline) {
-          playSound('offline');
-          wasOnline = false;
-        }
       }
     }
 
     async function checkKickStatus() {
+      if (isManualOverride) return;
+
       try {
-        const timestamp = new Date().getTime();
-        const targetUrl = `https://kick.com/api/v1/channels/${TARGET_CHANNEL}`;
+        const proxyUrl = "https://api.allorigins.win/get?url=";
+        const kickApiUrl = encodeURIComponent(`https://kick.com/api/v1/channels/${TARGET_CHANNEL}`);
         
-        const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}&_cb=${timestamp}`;
-        
-        const response = await fetch(proxyUrl);
+        const response = await fetch(proxyUrl + kickApiUrl);
         if (!response.ok) throw new Error("API hiba");
 
-        const channelData = await response.json();
+        const data = await response.json();
+        const channelData = JSON.parse(data.contents);
 
         const isLive = channelData.livestream !== null && channelData.livestream !== undefined;
         updateUI(isLive);
 
       } catch (err) {
-        try {
-          const timestamp = new Date().getTime();
-          const targetUrl = `https://kick.com/api/v1/channels/${TARGET_CHANNEL}`;
-          const fallbackUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&cb=${timestamp}`;
-          
-          const response = await fetch(fallbackUrl);
-          const data = await response.json();
-          const channelData = JSON.parse(data.contents);
-          
-          const isLive = channelData.livestream !== null && channelData.livestream !== undefined;
-          updateUI(isLive);
-        } catch (fallbackErr) {
-          console.warn("API lekérdezési hiba:", fallbackErr);
-          updateUI(false);
-        }
+        console.warn("API lekérdezési hiba:", err);
+        if (!isManualOverride) updateUI(false);
       }
     }
 
+    function toggleManualOverride() {
+      isManualOverride = true;
+      manualState = !manualState;
+      playSound(manualState ? 'online' : 'offline');
+      updateUI(manualState);
+    }
+
     checkKickStatus();
-    setInterval(checkKickStatus, 15000);
+    setInterval(checkKickStatus, 60000);
   </script>
 </body>
 </html>
