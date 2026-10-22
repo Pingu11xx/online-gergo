@@ -327,22 +327,21 @@
       }
     }
 
-   async function checkKickStatus() {
-      if (isManualOverride) return;
-
+    async function checkKickStatus() {
       try {
-        const proxyUrl = "https://api.allorigins.win/get?url=";
-        const kickApiUrl = encodeURIComponent(`https://kick.com/api/v1/channels/${TARGET_CHANNEL}`);
+        const timestamp = new Date().getTime();
+        const targetUrl = `https://kick.com/api/v1/channels/${TARGET_CHANNEL}`;
         
-        const response = await fetch(proxyUrl + kickApiUrl);
+        const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}&_cb=${timestamp}`;
+        
+        const response = await fetch(proxyUrl);
         if (!response.ok) throw new Error("API hiba");
 
-        const data = await response.json();
-        const channelData = JSON.parse(data.contents);
+        const channelData = await response.json();
 
         const isLive = channelData.livestream !== null && channelData.livestream !== undefined;
         updateUI(isLive);
-        
+
       } catch (err) {
         try {
           const timestamp = new Date().getTime();
