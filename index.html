@@ -252,6 +252,7 @@
     ];
 
     let wasOnline = false;
+    let offlineConsecutiveCount = 0; // Biztonsági számláló hamis offline jelek ellen
 
     const statusCard = document.getElementById('statusCard');
     const badgeText = document.getElementById('badgeText');
@@ -296,14 +297,17 @@
 
     function updateUI(isLive) {
       if (isLive) {
+        // Ha online van, azonnal nullázzuk az offline hibaszámlálót
+        offlineConsecutiveCount = 0;
+
         statusCard.className = "status-card online";
         badgeText.textContent = "ONLINE!";
         statusTitle.textContent = "IGEN, ONLINE!";
         statusDesc.textContent = `${TARGET_CHANNEL} épp streamel! Gergő garantáltan nézi!`;
-        quoteBox.textContent = ONLINE_QUOTES[Math.floor(Math.random() * ONLINE_QUOTES.length)];
-        streamBox.style.display = "block";
-
+        
+        // Csak akkor vált idézetet és játszik le hangot/konfettit, ha előtte tényleg offline volt
         if (!wasOnline) {
+          quoteBox.textContent = ONLINE_QUOTES[Math.floor(Math.random() * ONLINE_QUOTES.length)];
           kickFrame.src = `https://player.kick.com/${TARGET_CHANNEL}`;
           playSound('online');
           if (typeof confetti === 'function') {
@@ -311,19 +315,33 @@
           }
           wasOnline = true;
         }
+        streamBox.style.display = "block";
+
       } else {
+        // Stabilizálás: Ha épp online-nak tudjuk, de a proxy hirtelen offline-t ad,
+        // nem váltjuk át egyből, hanem adunk neki 3 próbalehetőséget (45 mp)!
+        if (wasOnline) {
+          offlineConsecutiveCount++;
+          if (offlineConsecutiveCount < 3) {
+            console.warn(`Átmeneti API hiba / hamis offline jel (${offlineConsecutiveCount}/3). Megtartjuk online-ként.`);
+            return; // Kilép, nem bántja az online státuszt
+          }
+        }
+
+        // Ha tényleg tartósan offline
         statusCard.className = "status-card offline";
         badgeText.textContent = "OFFLINE";
         statusTitle.textContent = "NEM, OFFLINE";
         statusDesc.textContent = `${TARGET_CHANNEL} nem streamel. Gergő gyanúsan tétlen.`;
-        quoteBox.textContent = OFFLINE_QUOTES[Math.floor(Math.random() * OFFLINE_QUOTES.length)];
-        streamBox.style.display = "none";
-        kickFrame.src = "";
         
         if (wasOnline) {
+          quoteBox.textContent = OFFLINE_QUOTES[Math.floor(Math.random() * OFFLINE_QUOTES.length)];
           playSound('offline');
           wasOnline = false;
         }
+        
+        streamBox.style.display = "none";
+        kickFrame.src = "";
       }
     }
 
@@ -356,7 +374,8 @@
           updateUI(isLive);
         } catch (fallbackErr) {
           console.warn("API lekérdezési hiba:", fallbackErr);
-          updateUI(false);
+          // Hálózati hiba esetén is alkalmazzuk a védelmet, ne dobja le egyből
+          updateUI(wasOnline ? true : false); 
         }
       }
     }
